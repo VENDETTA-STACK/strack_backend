@@ -1,4 +1,5 @@
 const expense_time_categories = require('../models/expense-time-categories');
+const questionModel = require('../models/questions-schema');
 
 module.exports = {
     addExpenseCategory: async (params) => {
@@ -18,5 +19,28 @@ module.exports = {
         const expenseCategories = await expense_time_categories.find();
 
         return expenseCategories;
+    },
+
+    addIntialQuestionnaire: async (params) => {
+        let addQuestion = await new questionModel({
+            question: params.question
+        });
+
+        if (addQuestion != null) {
+            await addQuestion.save();
+            return addQuestion;
+        } else {
+            return undefined;
+        }
+    },
+
+    getQuestions: async () => {
+        let questions = await questionModel.find();
+
+        if (questions.length) {
+            return questions
+        } else {
+            return [];
+        }
     }
 }
