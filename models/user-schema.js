@@ -28,12 +28,15 @@ const userSchema = mongoose.Schema({
     },
     isVerified: {
         type: Boolean,
-        default: true
+        default: false
     },
     password: {
         type: String,
         required: [true, 'Password is mandatory field']
     },
+    OTP: {
+        type: Number
+    }
 },
 {
     timestamps: true
