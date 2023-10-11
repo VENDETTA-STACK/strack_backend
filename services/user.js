@@ -46,5 +46,31 @@ module.exports = {
         let user = await userModel.findById(userId);
 
         return user;;
-    }
+    },
+
+    editUserProfile: async (params) => {
+        let update = {
+            firstName: params.firstName,
+            lastName: params.lastName,
+            email: params.email,
+            birthDate: moment.utc(params.birthDate)
+        }
+
+        let updateProfile = await userModel.findByIdAndUpdate(params.userId, update, { new: true });
+
+        return updateProfile;
+    },
+
+    /* Create user token */
+    createUserToken: async (userId) => {
+        const token = jwt.sign(
+            { user_id: userId },
+            process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            },
+        );
+
+        return token;
+    },
 }

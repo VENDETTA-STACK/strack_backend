@@ -34,7 +34,8 @@ module.exports = {
                 const validPassword = await bcrypt.compare(params.password, userHashpassword);
 
                 if (validPassword) {
-                    return res.status(200).json({ IsSuccess: true, Data: [user], Message: 'User loggedIn' });
+                    let token = await userService.createUserToken(user.id);
+                    return res.status(200).json({ IsSuccess: true, Data: [...user, token], Message: 'User loggedIn' });
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Incorrect password' });
                 }
@@ -61,6 +62,26 @@ module.exports = {
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
             }    
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    editUserProfileDetails: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            if (params.userId === undefined || params.userId === null || params.userId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide userId required parameter' });
+            }
+
+            let edit = await userService.editUserProfile(params);
+
+            if (edit !== undefined) {
+                return res.status(200).json({ IsSuccess: true, Data: edit, Message: 'User profile updated' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+            }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
