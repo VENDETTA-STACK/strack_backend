@@ -42,6 +42,16 @@ module.exports = {
         }
     },
 
+    resetPassword: async (userId, password) => {
+        let update = {
+            password
+        };
+
+        let updatePassword = await userModel.findByIdAndUpdate(userId, update, { new: true });
+
+        return updatePassword;
+    },
+
     getUserById: async (userId) => {
         let user = await userModel.findById(userId);
 

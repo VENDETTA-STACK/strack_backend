@@ -47,6 +47,45 @@ module.exports = {
         }
     },
 
+    /* Create user token */
+    createUserToken: async (userId) => {
+        const token = jwt.sign(
+            { 
+                user_id: userId },
+                process.env.JWT_SECRET_KEY,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            },
+        );
+
+        return token;
+    },
+
+    forgetPassword: async (req, res, next) => {
+        try {
+            const { oldPassword, newPassword, userId } = req.body;
+
+            let user = await userService.getUserById(userId);
+
+            if (user === undefined || user === null) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
+            }
+
+            const validPassword = await bcrypt.compare(oldPassword, user.password);
+
+            if (validPassword) {
+                const salt = await bcrypt.genSalt(10);
+                let hashPassword = bcrypt.hashSync(newPassword, salt);
+                let changePassword = await userService.resetPassword(user._id, hashPassword);
+                return res.status(200).json({ IsSuccess: true, Data: [changePassword], Message: 'Password reset successfully' });
+            } else {
+                return res.status(400).json({ IsSuccess: true, Data: [], Message: 'Invalid password' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
     getUserById: async (req, res, next) => {
         try {
             const userId = req.params.userId;
