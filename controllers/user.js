@@ -52,8 +52,8 @@ module.exports = {
                 const validPassword = await bcrypt.compare(params.password, userHashpassword);
 
                 if (validPassword) {
-                    let token = await userService.createUserToken(user.id);
-                    return res.status(200).json({ IsSuccess: true, Data: [...user, token], Message: 'User loggedIn' });
+                    //let token = await userService.createUserToken(user.id);
+                    return res.status(200).json({ IsSuccess: true, Data: user, Message: 'User loggedIn' });
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Incorrect password' });
                 }
