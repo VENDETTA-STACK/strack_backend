@@ -55,6 +55,12 @@ module.exports = {
         return user;;
     },
 
+    getUserByEmail: async (email) => {
+        let user = await userModel.find({ email });
+
+        return user;;
+    },
+
     editUserProfile: async (params) => {
         let update = {
             firstName: params.firstName,

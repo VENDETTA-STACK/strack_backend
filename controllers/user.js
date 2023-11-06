@@ -6,6 +6,24 @@ module.exports = {
         try {
             const params = req.body;
 
+            if (params.firstName === '' || params.firstName === null || params.firstName === undefined) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'firstName parameter is missing' });
+            }
+
+            if (params.password === '' || params.password === null || params.password === undefined) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'password parameter is missing' });
+            }
+
+            if (params.email === '' || params.email === null || params.email === undefined) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'email parameter is missing' });
+            }
+
+            let checkExistUser = await userService.getUserByEmail(params.email);
+
+            if (checkExistUser.length) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User already exist with this email' });
+            }
+
             const salt = await bcrypt.genSalt(10);
             const hashPassword = bcrypt.hashSync(params.password, salt);
             params.password = hashPassword;
