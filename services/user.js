@@ -6,8 +6,6 @@ const otpGenerator = (len) => Math.floor(10 ** (len - 1) + Math.random() * (10 *
 module.exports = {
     registerUser: async (params) => {
 
-        const OTP = otpGenerator(4);
-
         let addNewUser = await new userModel({
             firstName: params.firstName,
             lastName: params.lastName,
@@ -17,8 +15,7 @@ module.exports = {
                 mobileNo: params.mobileNo
             },
             birthDate: moment.utc(params.birthDate),
-            password: params.password,
-            OTP
+            password: params.password
         });
 
         if (addNewUser != null) {

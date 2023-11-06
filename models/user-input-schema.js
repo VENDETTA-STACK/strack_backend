@@ -5,6 +5,9 @@ const userInputSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'expenseTimeCategory'
     },
+    categories: [{
+        type: String
+    }],
     text: {
         type: String
     },
