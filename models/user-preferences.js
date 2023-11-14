@@ -1,6 +1,10 @@
-const mongoose = requrie('mongoose');
+const mongoose = require('mongoose');
 
 const userPreferenceSchema = mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    },
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'expenseTimeCategory'
@@ -10,7 +14,7 @@ const userPreferenceSchema = mongoose.Schema({
         require: true
     },
     price: {
-        type: String,
+        type: Number,
         require: true
     }
 },

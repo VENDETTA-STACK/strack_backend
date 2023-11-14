@@ -1,5 +1,6 @@
 const expense_time_categories = require('../models/expense-time-categories');
 const questionModel = require('../models/questions-schema');
+const userPreferenceModel = require('../models/user-preferences');
 
 module.exports = {
     addExpenseCategory: async (params) => {
@@ -19,6 +20,23 @@ module.exports = {
         const expenseCategories = await expense_time_categories.find();
 
         return expenseCategories;
+    },
+
+    getExpenseCategoryById: async (categoryId) => {
+        const expenseCategory = await expense_time_categories.findById(categoryId);
+
+        return expenseCategory;
+    },
+
+    getExpenseCategoryByName: async (categoryName) => {
+        const query = {
+            expenseName: {
+              $regex: new RegExp(categoryName, 'i')
+            }
+          };
+        const expenseCategory = await expense_time_categories.find(query);
+
+        return expenseCategory;
     },
 
     addIntialQuestionnaire: async (params) => {
@@ -42,5 +60,54 @@ module.exports = {
         } else {
             return [];
         }
+    },
+
+    addPreference: async (params) => {
+        let addNewPreference = await new userPreferenceModel({
+            userId: params.userId,
+            categoryId: params.categoryId,
+            categoryName: params.categoryName,
+            price: Number(params.price)
+        });
+
+        if (addNewPreference) {
+            return addNewPreference.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    getAllUserPreferences: async (userId) => {
+        let getPreferences = await userPreferenceModel.find({ userId });
+
+        return getPreferences;
+    },
+
+    getPreferenceById: async (preferenceId) => {
+        let getPreference = await userPreferenceModel.findById(preferenceId);
+
+        return getPreference;
+    },
+
+    editUserPreference: async (params) => {
+        let update = {
+            categoryId: params.categoryId,
+            categoryName: params.categoryName,
+            price: params.price
+        };
+
+        let updateUserPreference = await userPreferenceModel.findByIdAndUpdate(params.preferenceId, update, { new: true });
+
+        if (updateUserPreference) {
+            return updateUserPreference;
+        } else {
+            return undefined;
+        }
+    },
+
+    deleteUserPreference: async (preferenceId) => {
+        let deletePreferenceId = await userPreferenceModel.findByIdAndDelete(preferenceId);
+
+        return true;
     }
 }
