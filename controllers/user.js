@@ -44,9 +44,11 @@ module.exports = {
         try {
             const params = req.body;
 
-            let user = await userService.loginUser(params);
+            // let user = await userService.loginUser(params);
+            let user = await userService.getUserByEmail(params.email);
 
-            if (user !== undefined && user !== null) {
+            if (user.length === 1) {
+                user = user[0];
                 let userHashpassword = user.password;
 
                 const validPassword = await bcrypt.compare(params.password, userHashpassword);
