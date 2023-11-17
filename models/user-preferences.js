@@ -5,18 +5,15 @@ const userPreferenceSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users'
     },
-    categoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'expenseTimeCategory'
-    },
-    categoryName: {
-        type: String,
-        require: true
-    },
-    price: {
-        type: Number,
-        require: true
-    }
+    preference: [{
+        categoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'expenseTimeCategory'
+        },
+        price: {
+            type: Number
+        }
+    }]
 },
 {
     timestamps: true

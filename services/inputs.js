@@ -65,9 +65,7 @@ module.exports = {
     addPreference: async (params) => {
         let addNewPreference = await new userPreferenceModel({
             userId: params.userId,
-            categoryId: params.categoryId,
-            categoryName: params.categoryName,
-            price: Number(params.price)
+            preference: params.userPreference
         });
 
         if (addNewPreference) {
@@ -77,8 +75,17 @@ module.exports = {
         }
     },
 
-    getAllUserPreferences: async (userId) => {
+    getPreferencesByUserId: async (userId) => {
         let getPreferences = await userPreferenceModel.find({ userId });
+
+        return getPreferences;
+    },
+
+    getAllUserPreferences: async (userId) => {
+        let getPreferences = await userPreferenceModel.find({ userId })
+                                                      .populate({
+                                                        path: 'preference.categoryId'
+                                                      });
 
         return getPreferences;
     },
@@ -92,8 +99,7 @@ module.exports = {
     editUserPreference: async (params) => {
         let update = {
             categoryId: params.categoryId,
-            categoryName: params.categoryName,
-            price: params.price
+            preference: params.userPreference
         };
 
         let updateUserPreference = await userPreferenceModel.findByIdAndUpdate(params.preferenceId, update, { new: true });

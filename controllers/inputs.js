@@ -33,7 +33,12 @@ module.exports = {
             const expenses = await inputServices.getExpenseCategory();
 
             if (expenses && expenses.length) {
-                return res.status(200).json({ IsSuccess: true, Data: expenses, Message: 'Expense and time categories found' });
+                return res.status(200).json({
+                    IsSuccess: true, 
+                    Count: expenses.length,
+                    Data: expenses, 
+                    Message: 'Expense and time categories found' 
+                });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No expense category found' });
             }
@@ -92,18 +97,43 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Preference userId is required parameter' });
             }
 
-            if (params.categoryId === undefined || params.categoryId === null || params.categoryId === '') {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Preference categoryId is required parameter' });
+            if (params.preference === undefined || params.preference === null || params.preference === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Preference is required parameter' });
             }
 
-            if (params.price === undefined || params.price === null || params.price === '') {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Preference price is required parameter' });
+            if (params.preference.length === 0) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Preference is required list of categoryId and theire price parameter' });
             }
 
-            let checkExist = await inputServices.getExpenseCategoryById(params.categoryId);
+            let userPreference = [];
 
-            if (checkExist) {
-                params.categoryName = checkExist.expenseName;
+            for (let i in params.preference) {
+                const category = params.preference[i];
+                
+                if (category) {
+                    let checkCategoryExist = await inputServices.getExpenseCategoryById(category.categoryId); 
+
+                    if (checkCategoryExist) {
+                        userPreference.push(params.preference[i]);
+                    }
+                }
+            }
+
+            params.userPreference = userPreference;
+
+            let userExistPreference  = await inputServices.getPreferencesByUserId(params.userId);
+
+            if (userExistPreference.length > 0) {
+                params.preferenceId = userExistPreference[0]._id;
+
+                let editPreference = await inputServices.editUserPreference(params);
+
+                if (editPreference) {
+                    return res.status(200).json({ IsSuccess: true, Data: editPreference, Message: 'User preference updated' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User preference not updated' });
+                }
+            } else {
                 let addPreference = await inputServices.addPreference(params);
 
                 if (addPreference) {
@@ -111,8 +141,6 @@ module.exports = {
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User preference not added' });
                 }
-            } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No expense category found' });
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
