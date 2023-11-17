@@ -47,14 +47,6 @@ module.exports = {
         }
     },
 
-    // editExpenseCategory: async (req, res, next) => {
-    //     try {
-            
-    //     } catch (error) {
-    //         return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
-    //     }
-    // }
-
     addInitialQuestionnaire: async (req, res, next) => {
         try {
             const params = req.body;
@@ -211,12 +203,123 @@ module.exports = {
 
             if (checkExistPreference) {
                 await inputServices.deleteUserPreference(preferenceId);
-                return res.status(200).json({ IsSuccess: true, Data: [], Message: 'User preference deleted' });
+                return res.status(200).json({ IsSuccess: true, Data: 1, Message: 'User preference deleted' });
             } else {
-                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No user preference found' }); 
+                return res.status(400).json({ IsSuccess: false, Data: 0, Message: 'No user preference found' }); 
             }
         } catch (error) {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
-    }
+    },
+
+    addUserSpendings: async (req, res, next) => {
+        try {
+            let params = req.body;
+
+            if (params.userId === undefined || params.userId === null || params.userId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide userId parameter' });
+            }
+
+            if (params.categoryId === undefined || params.categoryId === null || params.categoryId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide categoryId parameter' });
+            }
+
+            if (params.isTime) {
+                if (params.fromTime === undefined || params.fromTime === null || params.fromTime === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide fromTime parameter' });
+                }
+    
+                if (params.toTime === undefined || params.toTime === null || params.toTime === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide toTime parameter' });
+                }
+            } else {
+                if (params.price === undefined || params.price === null || params.price === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide price parameter' });
+                }
+            }
+
+            let addSpendingData = await inputServices.addUserSpendings(params);
+
+            if (addSpendingData) {
+                return res.status(200).json({ IsSuccess: true, Data: [addSpendingData], Message: 'User spending added' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User spending not added' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    getUserAllSpendings: async (req, res, next) => {
+        try {
+            const userId = req.params.userId;
+
+            let spendings = await inputServices.getUserSpendings(userId);
+
+            if (spendings.length > 0) {
+                return res.status(200).json({ IsSuccess: true, Data: spendings, Message: 'User spendings found' }); 
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User spendings not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    editUserSpendings: async (req, res, next) => {
+        try {
+            let params = req.body;
+
+            if (params.spendingId === undefined || params.spendingId === null || params.spendingId === '') {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide spendingId parameter' });
+            }
+
+            if (params.isTime) {
+                if (params.fromTime === undefined || params.fromTime === null || params.fromTime === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide fromTime parameter' });
+                }
+    
+                if (params.toTime === undefined || params.toTime === null || params.toTime === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide toTime parameter' });
+                }
+            } else {
+                if (params.price === undefined || params.price === null || params.price === '') {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide price parameter' });
+                }
+            }
+
+            let checkExist = await inputServices.getUserSpendingById(params.spendingId);
+
+            if (checkExist) {
+                let editSpendingData = await inputServices.editUserSpendings(params);
+
+                if (editSpendingData) {
+                    return res.status(200).json({ IsSuccess: true, Data: [editSpendingData], Message: 'User spending updated' });
+                } else {
+                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User spending not updated' });
+                }
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'No Spending record found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
+
+    deleteUserSpendings: async (req, res, next) => {
+        try {
+            const spendingId = req.params.id;
+
+            let checkExistPreference = await inputServices.getPreferenceById(spendingId);
+
+            if (checkExistPreference) {
+                await inputServices.deleteUserSpending(spendingId);
+                return res.status(200).json({ IsSuccess: true, Data: 1, Message: 'User preference deleted' });
+            } else {
+                return res.status(400).json({ IsSuccess: false, Data: 0, Message: 'No user preference found' }); 
+            }
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    },
 }

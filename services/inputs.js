@@ -1,6 +1,8 @@
 const expense_time_categories = require('../models/expense-time-categories');
 const questionModel = require('../models/questions-schema');
 const userPreferenceModel = require('../models/user-preferences');
+const userInputModel = require('../models/user-input-schema');
+const moment = require('moment-timezone');
 
 module.exports = {
     addExpenseCategory: async (params) => {
@@ -115,5 +117,88 @@ module.exports = {
         let deletePreferenceId = await userPreferenceModel.findByIdAndDelete(preferenceId);
 
         return true;
-    }
+    },
+
+    addUserSpendings: async (params) => {
+        let addSpending = await new userInputModel({
+            userId: params.userId,
+            categoryId: params.categoryId,
+            text: params.text,
+            isTime: params.isTime,
+            fromTime: params.isTime ? moment.utc(params.fromTime, 'HH:mm') : undefined,
+            toTime: params.isTime ? moment.utc(params.toTime, 'HH:mm') : undefined,
+            price: params.isTime === false ? params.price : undefined,
+            image: params.image
+        });
+
+        if (addSpending) {
+            return addSpending.save();
+        } else {
+            return undefined;
+        }
+    },
+
+    getUserSpendings: async (userId) => {
+        let spendings = await userInputModel.find({ userId });
+
+        let userSpendings = []
+
+        spendings.forEach((spend) => {
+
+            let data;
+            if (spend.isTime) {
+                data = {
+                    _id: spend._id,
+                    userId: spend.userId,
+                    categoryId: spend.categoryId,
+                    text: spend.text,
+                    fromTime: moment.utc(spend.fromTime).format('hh:mm A'),
+                    fromDate: moment.utc(spend.fromTime).format('DD/MM/YYYY'),
+                    toTime: moment.utc(spend.toTime).format('hh:mm A'),
+                    toDate: moment.utc(spend.toTime).format('DD/MM/YYYY'),
+                    image: spend.image,
+                    isTime: spend.isTime,
+                }
+            } else {
+                data = spend;
+            }
+
+            userSpendings.push(data);
+            
+        });
+
+        return userSpendings;
+    },
+
+    getUserSpendingById: async (spendingId) => {
+        const spending = await userInputModel.findOne({ _id: spendingId });
+
+        return spending;
+    },
+
+    editUserSpendings: async (params) => {
+        let update = {
+            text: params.text !== undefined && params.text !== '' ? params.text : undefined,
+            fromTime: params.isTime ? moment.utc(params.fromTime, 'HH:mm').toString() : undefined,
+            toTime: params.isTime ? moment.utc(params.toTime, 'HH:mm').toString() : undefined,
+            price: params.isTime === false ? params.price : undefined,
+            image: params.image !== undefined && params.image !== '' ? params.image : undefined
+        }
+
+        console.log(update)
+
+        let updateUserSpending = await userInputModel.findByIdAndUpdate(params.spendingId, update, { new: true });
+
+        if (updateUserSpending) {
+            return updateUserSpending;
+        } else {
+            return undefined;
+        }
+    },
+
+    deleteUserSpending: async (spendingId) => {
+        let deleteSpending = await userInputModel.findByIdAndDelete(spendingId);
+
+        return true;
+    },
 }

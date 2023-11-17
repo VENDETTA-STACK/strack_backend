@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const userInputSchema = mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
+    },
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'expenseTimeCategory'
@@ -8,6 +12,10 @@ const userInputSchema = mongoose.Schema({
     categories: [{
         type: String
     }],
+    isTime: {
+        type: Boolean,
+        require: true
+    },
     text: {
         type: String
     },
