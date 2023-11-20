@@ -108,7 +108,7 @@ module.exports = {
 
     getUserById: async (req, res, next) => {
         try {
-            const userId = req.params.userId;
+            const userId = req.query.userId;
 
             if (!userId) {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide valid userId parameter' });
@@ -117,7 +117,7 @@ module.exports = {
             let user = await userService.getUserById(userId);
 
             if (user !== undefined) {
-                return res.status(200).json({ IsSuccess: true, Data: user, Message: 'User found' });
+                return res.status(200).json({ IsSuccess: true, Data: [user], Message: 'User found' });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
             }    
