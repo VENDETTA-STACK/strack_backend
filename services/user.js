@@ -65,8 +65,10 @@ module.exports = {
         let update = {
             firstName: params.firstName,
             lastName: params.lastName,
-            countryCode: params.countryCode,
-            mobileNo: params.mobileNo,
+            contactNumber: {
+                countryCode: params.countryCode,
+                mobileNo: params.mobileNo,
+            },
             birthDate: moment.utc(params.birthDate)
         }
 
