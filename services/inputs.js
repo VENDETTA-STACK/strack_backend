@@ -128,7 +128,7 @@ module.exports = {
             fromTime: params.isTime ? moment.utc(params.fromTime, 'HH:mm') : undefined,
             toTime: params.isTime ? moment.utc(params.toTime, 'HH:mm') : undefined,
             price: params.isTime === false ? params.price : undefined,
-            image: params.image
+            image: params.uploadedImage
         });
 
         if (addSpending) {
