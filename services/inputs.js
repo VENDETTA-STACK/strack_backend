@@ -178,14 +178,13 @@ module.exports = {
 
     editUserSpendings: async (params) => {
         let update = {
+            categoryId: params.categoryId !== undefined && params.categoryId !== '' ? params.categoryId : undefined,
             text: params.text !== undefined && params.text !== '' ? params.text : undefined,
             fromTime: params.isTime ? moment.utc(params.fromTime, 'HH:mm').toString() : undefined,
             toTime: params.isTime ? moment.utc(params.toTime, 'HH:mm').toString() : undefined,
             price: params.isTime === false ? params.price : undefined,
             image: params.image !== undefined && params.image !== '' ? params.image : undefined
         }
-
-        console.log(update)
 
         let updateUserSpending = await userInputModel.findByIdAndUpdate(params.spendingId, update, { new: true });
 
