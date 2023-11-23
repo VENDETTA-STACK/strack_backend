@@ -64,6 +64,25 @@ module.exports = {
                 let addCategory = await inputServices.addExpenseCategory(params);
 
                 if (addCategory) {
+                    if (params.userId) {
+                        let userExistPreference  = await inputServices.getPreferencesByUserId(params.userId);
+
+                        if (userExistPreference.length === 0) {
+                            params.userPreference = [
+                                {
+                                    categoryId: addCategory._id,
+                                    price: 0
+                                }
+                            ];
+                            let addPreference = await inputServices.addPreference(params);
+
+                            if (addPreference) {
+                                return res.status(200).json({ IsSuccess: true, Data: [addPreference], Message: 'User category and preference added' });
+                            } else {
+                                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Category added' });
+                            }   
+                        }
+                    }
                     return res.status(200).json({ IsSuccess: true, Data: [addCategory], Message: `${params.expenseName} category added` });
                 } else {
                     return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Category not added' });
@@ -367,7 +386,7 @@ module.exports = {
         try {
             const spendingId = req.params.id;
 
-            let checkExistPreference = await inputServices.getPreferenceById(spendingId);
+            let checkExistPreference = await inputServices.getUserSpendingById(spendingId);
 
             if (checkExistPreference) {
                 await inputServices.deleteUserSpending(spendingId);
