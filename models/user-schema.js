@@ -33,6 +33,9 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Password is mandatory field']
+    },
+    profileImage: {
+        type: String
     }
 },
 {

@@ -63,13 +63,14 @@ module.exports = {
 
     editUserProfile: async (params) => {
         let update = {
-            firstName: params.firstName,
-            lastName: params.lastName,
+            firstName: params.firstName !== undefined && params.firstName !== '' ? params.firstName : undefined,
+            lastName: params.lastName !== undefined && params.lastName !== '' ? params.lastName : undefined,
             contactNumber: {
-                countryCode: params.countryCode,
-                mobileNo: params.mobileNo,
+                countryCode: params.countryCode !== undefined && params.countryCode !== '' ? params.countryCode : undefined,
+                mobileNo: params.mobileNo !== undefined && params.mobileNo !== '' ? params.mobileNo : undefined,
             },
-            birthDate: moment.utc(params.birthDate)
+            birthDate: params.birthDate !== undefined && params.birthDate !== '' ? moment.utc(params.birthDate): undefined,
+            profileImage: params.uploadedProfileImage !== undefined && params.uploadedProfileImage !== '' ? params.uploadedProfileImage : undefined
         }
 
         let updateProfile = await userModel.findByIdAndUpdate(params.userId, update, { new: true });

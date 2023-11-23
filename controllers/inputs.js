@@ -1,3 +1,4 @@
+const fs = require('fs');
 const expenseTimeCategories = require('../models/expense-time-categories');
 const inputServices = require('../services/inputs');
 
@@ -15,7 +16,7 @@ const uploadedImage = async (base64Image) => {
     const dataBuffer = Buffer.from(base64Data, 'base64');
     
     // Generate a unique filename
-    const fileName = `${Date.now()}.${fileFormat}`;
+    const fileName = `spendings_${Date.now()}.${fileFormat}`;
     
     const filePath = `uploads/${fileName}`;
     

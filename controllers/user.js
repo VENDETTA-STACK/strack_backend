@@ -1,5 +1,51 @@
 const userService = require('../services/user');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+
+const uploadedImage = async (base64Image) => {
+    const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
+      
+    if (!matches || matches.length !== 3) {
+        throw new Error('Invalid base64 image string');
+    }
+    
+    const fileFormat = matches[1];
+    const base64Data = matches[2];
+    
+    // Remove the data:image/png;base64 part
+    const dataBuffer = Buffer.from(base64Data, 'base64');
+    
+    // Generate a unique filename
+    const fileName = `profile_${Date.now()}.${fileFormat}`;
+    
+    const filePath = `uploads/${fileName}`;
+    
+    // Save the image to the "uploads" folder
+    fs.writeFile(filePath, dataBuffer, (err) => {
+        if (err) {
+        console.error(err);
+        throw new Error('Error uploading image');
+        } else {
+        console.log('Image uploaded successfully');
+        }
+    });
+    
+    return fileName;
+}
+
+const deleteImage = async (fileName) => {
+    const filePath = `uploads/${fileName}`;
+  
+    // Delete the image file
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(err);
+        throw new Error('Error deleting image');
+      } else {
+        console.log('Image deleted successfully');
+      }
+    });
+}
 
 module.exports = {
     signUpUser: async (req, res, next) => {
@@ -134,11 +180,21 @@ module.exports = {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Please provide userId required parameter' });
             }
 
+            if (params.profileImage) {
+                let fileName = await uploadedImage(params.profileImage);
+
+                params.uploadedProfileImage = fileName;
+            }
+
             let edit = await userService.editUserProfile(params);
 
             if (edit !== undefined) {
                 return res.status(200).json({ IsSuccess: true, Data: edit, Message: 'User profile updated' });
             } else {
+
+                if (params.uploadedProfileImage) {
+                    await deleteImage(params.uploadedProfileImage);
+                }
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
             }
         } catch (error) {
