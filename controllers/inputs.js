@@ -1,6 +1,40 @@
 const fs = require('fs');
+const path = require('path');
 const expenseTimeCategories = require('../models/expense-time-categories');
 const inputServices = require('../services/inputs');
+
+const { exec } = require('child_process');
+
+const runPythonScript = (data) => {
+    return new Promise((resolve, reject) => {
+        // Modify the command to include the input data
+        const csvFilePath = path.join(__dirname, 'split_wise.csv');
+
+        console.log(data)
+
+        let dataIs = {
+            'Category': data.Category,
+            'Cost': data.Cost,
+            'Month': data.Month,
+            'DayOfWeek': data.DayOfWeek,
+        }
+
+        console.log(dataIs)
+
+        let inputData = JSON.stringify(data);
+
+        console.log(csvFilePath, inputData);   
+        const command = `python3 ${__dirname}/suggestion_model.py ${csvFilePath} ${JSON.stringify(inputData)}`;
+    
+        exec(command, (error, stdout, stderr) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(stdout);
+          }
+        });
+      });
+}
 
 const uploadedImage = async (base64Image) => {
     const matches = base64Image.match(/^data:image\/(\w+);base64,(.+)$/);
@@ -398,4 +432,18 @@ module.exports = {
             return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
         }
     },
+
+    getUserReports: async (req, res, next) => {
+        try {
+            const params = req.body;
+
+            // params.inputData = 'Movie';
+
+            const pythonResult = await runPythonScript(params.inputData);
+
+            return res.send(pythonResult);
+        } catch (error) {
+            return res.status(500).json({ IsSuccess: false, Data: [], Message: error.message });
+        }
+    }
 }

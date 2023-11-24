@@ -23,4 +23,6 @@ router.delete('/spending/:id', inputController.deleteUserSpendings);
 router.post('/question', inputController.addInitialQuestionnaire);
 router.get('/question', inputController.getInitialQuestionnaire);
 
+router.post('/report', inputController.getUserReports);
+
 module.exports = router;
