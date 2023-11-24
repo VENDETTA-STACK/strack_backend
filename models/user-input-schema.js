@@ -31,6 +31,9 @@ const userInputSchema = mongoose.Schema({
     image: {
         type: String
     }
+},
+{
+    timestamps: true
 });
 
 module.exports = mongoose.model('userInputs', userInputSchema);

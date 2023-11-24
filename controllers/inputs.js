@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const expenseTimeCategories = require('../models/expense-time-categories');
 const inputServices = require('../services/inputs');
+// const csv = require('csv-parser');
 
 const { exec } = require('child_process');
 
@@ -81,6 +82,34 @@ const deleteImage = async (fileName) => {
     });
 }
 
+// const readData = async () => {
+//     const csvFilePath = path.join(__dirname, 'split_wise.csv');
+//     const uniqueCategories = new Set();
+
+//     fs.createReadStream(csvFilePath)
+//     .pipe(csv())
+//     .on('data', (row) => {
+//         // Assuming the 'Category' column exists in your CSV data
+//         if (row.Category) {
+//         uniqueCategories.add(row.Category);
+//         }
+//     })
+//     .on('end', async () => {
+//         console.log('Unique Categories:', Array.from(uniqueCategories));
+//         let categories = Array.from(uniqueCategories);
+
+//         for (let i in categories) {
+//             console.log(categories[i]);
+//             await inputServices.addExpenseCategory(categories[i])
+//         }
+
+//         // Continue with your processing logic here
+//     })
+//     .on('error', (error) => {
+//         console.error('Error reading CSV file:', error);
+//     });
+// }
+
 module.exports = {
     addExpenseCategory: async (req, res, next) => {
         try {
@@ -132,6 +161,7 @@ module.exports = {
             const expenses = await inputServices.getExpenseCategory();
 
             if (expenses && expenses.length) {
+                // await readData()
                 return res.status(200).json({
                     IsSuccess: true, 
                     Count: expenses.length,
@@ -436,8 +466,6 @@ module.exports = {
     getUserReports: async (req, res, next) => {
         try {
             const params = req.body;
-
-            // params.inputData = 'Movie';
 
             const pythonResult = await runPythonScript(params.inputData);
 
