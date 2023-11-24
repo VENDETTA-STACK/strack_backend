@@ -90,6 +90,14 @@ module.exports = {
         try {
             const params = req.body;
 
+            if (!params.email) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Email is requied' }); 
+            }
+
+            if (!params.password) {
+                return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Password is requied' }); 
+            }
+
             // let user = await userService.loginUser(params);
             let user = await userService.getUserByEmail(params.email);
 
@@ -103,7 +111,7 @@ module.exports = {
                     //let token = await userService.createUserToken(user.id);
                     return res.status(200).json({ IsSuccess: true, Data: user, Message: 'User loggedIn' });
                 } else {
-                    return res.status(400).json({ IsSuccess: false, Data: [], Message: 'Incorrect password' });
+                    return res.status(401).json({ IsSuccess: false, Data: [], Message: 'Incorrect password' });
                 }
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: 'User not found' });
