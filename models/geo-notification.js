@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
-const reportSchema = mongoose.Schema({
+const geoNotification = mongoose.Schema({
+    title: {
+        type: String,
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId
     },
@@ -8,15 +11,12 @@ const reportSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'expenseTimeCategory'
     },
-    description: {
+    price: {
         type: String
     },
-    report: [{
-        type: String
-    }]
 },
 {
     timestamps: true
 });
 
-module.exports = mongoose.model('reports', reportSchema);
+module.exports = mongoose.model('geoNotification', geoNotification);
