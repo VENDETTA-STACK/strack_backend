@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const expenseTimeCategories = require('../models/expense-time-categories');
 const inputServices = require('../services/inputs');
-// const csv = require('csv-parser');
+const csv = require('csv-parser');
+const moment = require('moment-timezone');
 
 const { exec } = require('child_process');
 
@@ -35,6 +36,19 @@ const runPythonScript = (data) => {
           }
         });
       });
+}
+
+const addRowToCSV = (newRow, filePath) => {
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', (row) => {
+            // Process each existing row
+        })
+        .on('end', () => {
+            // Append the new row to the CSV file
+            fs.appendFileSync(filePath, `${newRow.join(',')}\n`);
+            console.log('New row added successfully.');
+        });
 }
 
 const uploadedImage = async (base64Image) => {
@@ -376,6 +390,15 @@ module.exports = {
             let addSpendingData = await inputServices.addUserSpendings(params);
 
             if (addSpendingData) {
+                const csvFilePath = path.join(__dirname, 'split_wise.csv');
+                let createdDate = moment().format('YYYY-MM-DD');
+                // const dateIs = createdDate.split('T')[0];
+
+                console.log(createdDate);
+                let category = await inputServices.getExpenseCategoryById(addSpendingData.categoryId)
+                const newDataRow = [createdDate, addSpendingData.text, category.expenseName, addSpendingData.price, 'INR', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', '0.00', 'YourName'];
+
+                addRowToCSV(newDataRow, csvFilePath);
                 return res.status(200).json({ IsSuccess: true, Data: [addSpendingData], Message: 'User spending added' });
             } else {
 

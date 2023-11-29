@@ -48,6 +48,7 @@ const deleteImage = async (fileName) => {
 }
 
 module.exports = {
+    // Register new user
     signUpUser: async (req, res, next) => {
         try {
             const params = req.body;
@@ -86,6 +87,7 @@ module.exports = {
         }
     },
 
+    //login user
     signInUser: async (req, res, next) => {
         try {
             const params = req.body;
@@ -135,6 +137,7 @@ module.exports = {
         return token;
     },
 
+    //forget password or password change
     forgetPassword: async (req, res, next) => {
         try {
             const { oldPassword, newPassword, userId } = req.body;

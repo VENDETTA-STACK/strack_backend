@@ -83,7 +83,7 @@ model.fit(X_train, y_train)
 # Evaluate the model (you should use appropriate metrics for your use case)
 y_pred = model.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
-print(f"Model Accuracy: {accuracy}")
+# print(f"Model Accuracy: {accuracy}")
 
 # Make predictions on new data
 # Prepare new monthly expense data for inference
@@ -103,7 +103,7 @@ new_data['Category'] = label_encoder.fit_transform(new_data['Category'])
 # Predict whether expenses exceed thresholds
 predictions = model.predict(new_data)
 
-print(predictions)
+# print(predictions)
 
 # Provide suggestions based on predictions
 for i, category in enumerate(new_data.Category):
