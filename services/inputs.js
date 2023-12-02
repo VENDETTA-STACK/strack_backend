@@ -187,7 +187,7 @@ module.exports = {
             fromTime: params.isTime ? moment.utc(params.fromTime, 'HH:mm').toString() : undefined,
             toTime: params.isTime ? moment.utc(params.toTime, 'HH:mm').toString() : undefined,
             price: params.isTime === false ? params.price : undefined,
-            image: params.image !== undefined && params.image !== '' ? params.image : undefined
+            image: params.uploadedImage !== undefined && params.uploadedImage !== '' ? params.uploadedImage : undefined
         }
 
         let updateUserSpending = await userInputModel.findByIdAndUpdate(params.spendingId, update, { new: true });

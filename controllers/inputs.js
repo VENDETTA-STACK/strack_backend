@@ -454,6 +454,13 @@ module.exports = {
             let checkExist = await inputServices.getUserSpendingById(params.spendingId);
 
             if (checkExist) {
+                
+                if (params.image) {
+                    let fileName = await uploadedImage(params.image);
+    
+                    params.uploadedImage = fileName.toString();
+                }
+
                 let editSpendingData = await inputServices.editUserSpendings(params);
 
                 if (editSpendingData) {
