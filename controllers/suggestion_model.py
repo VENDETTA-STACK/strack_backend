@@ -25,6 +25,8 @@ import joblib
 # drive.mount('/content/drive')
 csv_file_path = sys.argv[1]
 
+job_lib_path = sys.argv[3]
+
 # Load and preprocess your expense data
 data = pd.read_csv(csv_file_path)
 
@@ -52,7 +54,7 @@ scaler = StandardScaler()
 data['Cost'] = data['Cost'].apply(lambda x: float(x) if str(x).strip().replace('.', '', 1).isdigit() else np.nan)
 data['Cost'].fillna(0, inplace=True)  # Replace non-numeric values with 0 or any other suitable value.
 
-joblib.dump(label_encoder, "label_encoder.joblib")
+joblib.dump(label_encoder, job_lib_path)
 
 # Feature engineering
 data['date'] = pd.to_datetime(data['Date'])

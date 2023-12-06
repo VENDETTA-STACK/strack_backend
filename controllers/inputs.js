@@ -11,6 +11,7 @@ const runPythonScript = (data) => {
     return new Promise((resolve, reject) => {
         // Modify the command to include the input data
         const csvFilePath = path.join(__dirname, 'split_wise.csv');
+        const joblibPath = path.join(__dirname, 'label_encoder.joblib');
 
         console.log(data)
 
@@ -26,7 +27,7 @@ const runPythonScript = (data) => {
         let inputData = JSON.stringify(data);
 
         console.log(csvFilePath, inputData);   
-        const command = `python3 ${__dirname}/suggestion_model.py ${csvFilePath} ${JSON.stringify(inputData)}`;
+        const command = `python3 ${__dirname}/suggestion_model.py ${csvFilePath} ${JSON.stringify(inputData)} ${joblibPath}`;
     
         exec(command, (error, stdout, stderr) => {
           if (error) {
