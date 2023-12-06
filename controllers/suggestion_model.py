@@ -108,9 +108,38 @@ predictions = model.predict(new_data)
 # print(predictions)
 
 # Provide suggestions based on predictions
-for i, category in enumerate(new_data.Category):
-    if predictions[i] == 'Exceeded':
-        print(f"Expense for '{label_encoder.inverse_transform([category])}' exceeded the threshold. Consider controlling your expenses in this category for the next month.")
-    else:
-        print(f"Expense for '{label_encoder.inverse_transform([category])}' is within the acceptable range.")
+# for i, category in enumerate(new_data.Category):
+#     if predictions[i] == 'Exceeded':
+#         print(f"Expense for '{label_encoder.inverse_transform([category])}' exceeded the threshold. Consider controlling your expenses in this category for the next month.")
+#     else:
+#         print(f"Expense for '{label_encoder.inverse_transform([category])}' is within the acceptable range.")
 
+suggestions = []
+
+# Provide suggestions based on predictions
+for i, category in enumerate(new_data.Category):
+    expense_category = label_encoder.inverse_transform([category])[0]
+    expense_cost = new_data['Cost'][i].item()
+
+    if predictions[i] == 'Exceeded':
+        suggestion = {
+            'category': expense_category,
+            'status': 'Exceeded',
+            'cost': expense_cost,
+            'message': f"Expense for '{expense_category}' exceeded the threshold. Consider controlling your expenses in this category for the next month."
+        }
+    else:
+        suggestion = {
+            'category': expense_category,
+            'status': 'Within Threshold',
+            'cost': expense_cost,
+            'message': f"Expense for '{expense_category}' is within the acceptable range."
+        }
+
+    suggestions.append(suggestion)
+
+# Convert the suggestions list to JSON format
+json_response = json.dumps(suggestions, indent=2)
+
+# Print or return the JSON response
+print(json_response)

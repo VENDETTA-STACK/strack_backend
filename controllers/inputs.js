@@ -501,7 +501,8 @@ module.exports = {
             const pythonResult = await runPythonScript(params.inputData);
 
             if (pythonResult) {
-                return res.status(200).json({ IsSuccess: true, Data: pythonResult, Message: "User report found" });
+                const pythonJsonResponse = JSON.parse(pythonResult);
+                return res.status(200).json({ IsSuccess: true, Data: pythonJsonResponse, Message: "User report found" });
             } else {
                 return res.status(400).json({ IsSuccess: false, Data: [], Message: "User report not found" });
             }
