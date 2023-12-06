@@ -27,7 +27,7 @@ const runPythonScript = (data) => {
         let inputData = JSON.stringify(data);
 
         console.log(csvFilePath, inputData);   
-        const command = `python3 ${__dirname}/suggestion_model.py ${csvFilePath} ${JSON.stringify(inputData)} ${joblibPath}`;
+        const command = `sudo python3 ${__dirname}/suggestion_model.py ${csvFilePath} ${JSON.stringify(inputData)} ${joblibPath}`;
     
         exec(command, (error, stdout, stderr) => {
           if (error) {
