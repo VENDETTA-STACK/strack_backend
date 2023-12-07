@@ -18,7 +18,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ 
   extended: true,
-  limit: '50mb'
+  limit: '100mb'
  }));
 // app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
